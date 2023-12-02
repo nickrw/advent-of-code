@@ -8,8 +8,19 @@ object Dec2 {
   enum Colour:
     case Red, Green, Blue
 
-  case class Game(id: Int, selections: List[Map[Colour, Int]]) {
+  object Game {
+    def apply(line: String): Game = {
+      val (gameIDContainer, selectionContainer) = line.splitAt(line.indexOf(":") + 1)
+      val gameID = gameIDContainer.filter(numberChars.contains).toInt
+      val selections = selectionContainer
+        .split(';')
+        .map(_.split(',').map(singleSelectionParser))
+        .map(_.reduce(_ ++ _))
+      Game(gameID, selections.toList)
+    }
+  }
 
+  case class Game(id: Int, selections: List[Map[Colour, Int]]) {
     def isPossibleWithMaxAvailable(setup: Map[Colour, Int]): Boolean =
       selections.forall { draw =>
         setup.forall { case (col, maximum) =>
@@ -24,17 +35,6 @@ object Dec2 {
       }
 
     lazy val power: Int = minimumRequirements.values.product
-
-  }
-
-  def lineParser(line: String): Game = {
-    val (gameIDContainer, selectionContainer) = line.splitAt(line.indexOf(":") + 1)
-    val gameID = gameIDContainer.filter(numberChars.contains).toInt
-    val selections = selectionContainer
-      .split(';')
-      .map(_.split(',').map(singleSelectionParser))
-      .map(_.reduce(_ ++ _))
-    Game(gameID, selections.toList)
   }
 
   def singleSelectionParser(selectionContainer: String): Map[Colour, Int] = {
@@ -56,7 +56,7 @@ object Dec2Part1 extends Dec2 {
       Colour.Blue -> 14,
     )
     (for line <- input
-      yield Dec2.lineParser(line))
+      yield Dec2.Game(line))
       .filter(_.isPossibleWithMaxAvailable(gameSetup))
       .map(_.id)
       .sum
@@ -66,7 +66,7 @@ object Dec2Part1 extends Dec2 {
 object Dec2Part2 extends Dec2 {
   override def solution: Int = {
     (for line <- input
-      yield Dec2.lineParser(line))
+      yield Dec2.Game(line))
       .map(_.power)
       .sum
   }

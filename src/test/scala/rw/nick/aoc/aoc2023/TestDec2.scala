@@ -27,7 +27,7 @@ class TestDec2 extends AnyFunSuite {
         Green -> 9,
       ),
     ))
-    assert(Dec2.lineParser(input) == expected)
+    assert(Game(input) == expected)
   }
 
   test("Day 2 game is possible") {
