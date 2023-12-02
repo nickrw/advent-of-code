@@ -1,5 +1,6 @@
 package rw.nick.aoc.aoc2023
 
+import rw.nick.aoc.ParserUtils.numberChars
 import rw.nick.aoc.Solution
 
 import scala.util.matching.Regex
@@ -11,10 +12,6 @@ object Dec1Part1 extends Dec1 {
   override def solution: Int =
     (for line <- input
       yield sumConcatenatedFirstLastLetterDigitsInString(line)).sum
-
-  val numberChars: Set[Char] = Set(
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
-  )
 
   def sumConcatenatedFirstLastLetterDigitsInString(value: String): Int =
     (for {
