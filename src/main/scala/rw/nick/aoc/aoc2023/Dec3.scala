@@ -12,58 +12,60 @@ object Dec3 {
 
   abstract class Cell
   case class NumberCell(value: Char) extends Cell
-  case class FixedNumberCell(nc: NumberCell, address: Address)
-  case object SymbolCell extends Cell
+  case class SymbolCell(symbol: Char) extends Cell
   case object EmptyCell extends Cell
+  case class FixedCell(cell: Cell, address: Address)
 
-  case class CellRow(cells: Seq[Cell], numberGroups: Seq[NumberGroup])
+  case class CellRow(cells: Seq[FixedCell], numberGroups: Seq[NumberGroup])
 
   def parseLine(line: String): CellRow = {
-    val matchedTypes: IndexedSeq[Cell] = line.zipWithIndex.map {
-      case (char, i) if numberChars.contains(char) => NumberCell(char)
-      case (char, i) if char == '.' => EmptyCell
-      case _ => SymbolCell
+    val matchedTypes: IndexedSeq[FixedCell] = line.zipWithIndex.map {
+      case (char, i) if numberChars.contains(char) => FixedCell(NumberCell(char), Address(i, 0))
+      case (char, i) if char == '.' => FixedCell(EmptyCell, Address(i, 0))
+      case (char, i) => FixedCell(SymbolCell(char), Address(i, 0))
     }
     val groups: List[NumberGroup] = matchedTypes
-      .zipWithIndex
-      .foldLeft(List[List[FixedNumberCell]]()) {
-        case (coll: List[List[FixedNumberCell]], (cell: NumberCell, i: Int)) =>
+      .foldLeft(List[List[FixedCell]]()) {
+        case (coll: List[List[FixedCell]], FixedCell(cell: NumberCell, address: Address)) =>
           val replacementPrevGroup = coll.lastOption.flatMap {
-            case prevGroup if prevGroup.last.address.absX == i-1 =>
-              Some(prevGroup :+ FixedNumberCell(cell, Address(i, 0)))
+            case prevGroup if prevGroup.last.address.absX == address.absX-1 =>
+              Some(prevGroup :+ FixedCell(cell, address))
             case _ => None
           }
           replacementPrevGroup.map { prevGroup =>
             coll.slice(0, coll.length-1) :+ prevGroup
-          }.getOrElse(coll :+ List(FixedNumberCell(cell, Address(i, 0))))
-        case (coll: List[List[FixedNumberCell]], _) => coll
+          }.getOrElse(coll :+ List(FixedCell(cell, address)))
+        case (coll: List[List[FixedCell]], _) => coll
       }
       .map(formGroup(line.length))
 
     CellRow(matchedTypes, groups)
   }
 
-  def formGroup(maxIndex: Int)(group: List[FixedNumberCell]): NumberGroup = {
-    val groupNumber: Int = group.foldLeft("") { case (coll: String, cell: FixedNumberCell) =>
-      coll ++ cell.nc.value.toString
+  def formGroup(maxIndex: Int)(group: List[FixedCell]): NumberGroup = {
+    val groupNumber: Int = group.foldLeft("") { case (coll: String, FixedCell(cell: NumberCell, address: Address)) =>
+      coll ++ cell.value.toString
     }.toInt
     val firstX = group.head.address.absX
     val lastX = group.last.address.absX
-    val startLeft = if (firstX == 0)
-      firstX
+    NumberGroup(groupNumber, neighbours(firstX, lastX, maxIndex))
+  }
+
+  def neighbours(startIndex: Int, endIndex: Int, maxIndex: Int): Seq[Address] = {
+    val startLeft = if (startIndex == 0)
+      startIndex
     else
-      firstX - 1
-    val endRight = if (lastX == maxIndex -1)
-      lastX
+      startIndex - 1
+    val endRight = if (endIndex == maxIndex - 1)
+      endIndex
     else
-      lastX + 1
+      endIndex + 1
     val lineAbove = (startLeft to endRight).map { x => Address(x, -1) }
-    val leftNeighb = if (firstX != 0) Some(Seq(Address(firstX - 1, 0))) else None
-    val rightNeighb = if (lastX < maxIndex - 1) Some(Seq(Address(lastX + 1, 0))) else None
+    val leftNeighb = if (startIndex != 0) Some(Seq(Address(startIndex - 1, 0))) else None
+    val rightNeighb = if (endIndex < maxIndex - 1) Some(Seq(Address(endIndex + 1, 0))) else None
     val lrNeighbs = leftNeighb.getOrElse(Seq()) ++ rightNeighb.getOrElse(Seq())
-    val lineBelow = (startLeft to endRight).map { x => Address(x, 1)}
-    val neighbours = lineAbove ++ lrNeighbs ++ lineBelow
-    NumberGroup(groupNumber, neighbours)
+    val lineBelow = (startLeft to endRight).map { x => Address(x, 1) }
+    lineAbove ++ lrNeighbs ++ lineBelow
   }
 
 }
@@ -80,7 +82,10 @@ object Dec3Part1 extends Solution(inputPath = "inputs/2023/dec3.txt") {
         val neighbours = group.neighbourCellAddresses.map { addr =>
           relRows(addr.relY+1).cells(addr.absX)
         }
-        neighbours.contains(Dec3.SymbolCell)
+        neighbours.exists {
+          case Dec3.FixedCell(_: Dec3.SymbolCell, _: Dec3.Address) => true
+          case _ => false
+        }
       }
     }
     groupsWithSymbolNeighbours.map(_.value).sum
