@@ -7,21 +7,33 @@ object Dec3 {
 
   case object Symbol
 
-  case class Address(absX: Int, relY: Int)
-  case class NumberGroup(value: Int, neighbourCellAddresses: Seq[Address])
+  case class Address(absX: Int, relY: Int) {
+    def neighbours(lineMaxIndex: Int): Seq[Address] = neighboursForIndex(absX, absX, lineMaxIndex)
+  }
+  case class NumberGroup(value: Int, neighbourCellAddresses: Seq[Address], xCoords: Seq[Int])
 
-  abstract class Cell
+  trait Cell {
+    val gearRatio: Option[Int] = None
+  }
   case class NumberCell(value: Char) extends Cell
-  case class SymbolCell(symbol: Char) extends Cell
+  class SymbolCell(symbol: Char) extends Cell
+  case object GearCell extends SymbolCell('*')
   case object EmptyCell extends Cell
   case class FixedCell(cell: Cell, address: Address)
 
-  case class CellRow(cells: Seq[FixedCell], numberGroups: Seq[NumberGroup])
+  case class CellRow(cells: Seq[FixedCell], numberGroups: Seq[NumberGroup]) {
+    lazy val numberGroupByXCoordinate: Map[Int, NumberGroup] = numberGroups.flatMap { group =>
+      group.xCoords.map { xCoord =>
+        xCoord -> group
+      }
+    }.toMap
+  }
 
   def parseLine(line: String): CellRow = {
     val matchedTypes: IndexedSeq[FixedCell] = line.zipWithIndex.map {
       case (char, i) if numberChars.contains(char) => FixedCell(NumberCell(char), Address(i, 0))
       case (char, i) if char == '.' => FixedCell(EmptyCell, Address(i, 0))
+      case (char, i) if char == '*' => FixedCell(GearCell, Address(i, 0))
       case (char, i) => FixedCell(SymbolCell(char), Address(i, 0))
     }
     val groups: List[NumberGroup] = matchedTypes
@@ -48,10 +60,10 @@ object Dec3 {
     }.toInt
     val firstX = group.head.address.absX
     val lastX = group.last.address.absX
-    NumberGroup(groupNumber, neighbours(firstX, lastX, maxIndex))
+    NumberGroup(groupNumber, neighboursForIndex(firstX, lastX, maxIndex), firstX to lastX)
   }
 
-  def neighbours(startIndex: Int, endIndex: Int, maxIndex: Int): Seq[Address] = {
+  def neighboursForIndex(startIndex: Int, endIndex: Int, maxIndex: Int): Seq[Address] = {
     val startLeft = if (startIndex == 0)
       startIndex
     else
@@ -91,4 +103,31 @@ object Dec3Part1 extends Solution(inputPath = "inputs/2023/dec3.txt") {
     groupsWithSymbolNeighbours.map(_.value).sum
   }
 
+}
+
+object Dec3Part2 extends Solution(inputPath = "inputs/2023/dec3.txt") {
+  import Dec3.{Address, FixedCell, GearCell, NumberGroup}
+  override def solution: Int = {
+    val peekLen = input.next().length
+    val emptyLine = (0 until peekLen).map(_ => '.').mkString
+    val rows = (for line <- (Seq(emptyLine).iterator ++ input ++ Seq(emptyLine.strip).iterator)
+      yield Dec3.parseLine(line))
+    val gearRatios: Iterator[Int] = rows.sliding(3).flatMap { relRows =>
+      relRows(1).cells.map {
+        case FixedCell(_: GearCell.type, address: Address) =>
+          val neighbouringPartNumbers: Set[NumberGroup] = address.neighbours(peekLen).flatMap { addr =>
+            val x = addr.absX
+            val y = addr.relY + 1
+            relRows(y).numberGroupByXCoordinate.get(x)
+          }.toSet
+          if (neighbouringPartNumbers.size == 2)
+            neighbouringPartNumbers.head.value * neighbouringPartNumbers.last.value
+          else
+            0
+        case _ =>
+          0
+      }
+    }
+    gearRatios.sum
+  }
 }

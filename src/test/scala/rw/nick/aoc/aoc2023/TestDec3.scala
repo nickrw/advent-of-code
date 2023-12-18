@@ -35,6 +35,7 @@ class TestDec3 extends AnyFunSuite {
             Address(3, 1),
             Address(4, 1),
           ),
+          xCoords = Seq(2, 3),
         ),
         NumberGroup(
           value = 633,
@@ -52,6 +53,7 @@ class TestDec3 extends AnyFunSuite {
             Address(8, 1),
             Address(9, 1),
           ),
+          xCoords = Seq(6, 7, 8),
         ),
       )
     )
@@ -80,6 +82,7 @@ class TestDec3 extends AnyFunSuite {
         Address(14, 1),
         Address(15, 1),
       ),
+      xCoords = Seq(12, 13, 14),
     )
     assert(Dec3.formGroup(20)(input) == expectedGroup)
   }
@@ -103,6 +106,7 @@ class TestDec3 extends AnyFunSuite {
         Address(2, 1),
         Address(3, 1),
       ),
+      xCoords = Seq(0, 1, 2),
     )
     assert(Dec3.formGroup(20)(input) == expectedGroup)
   }
@@ -126,6 +130,7 @@ class TestDec3 extends AnyFunSuite {
         Address(13, 1),
         Address(14, 1),
       ),
+      xCoords = Seq(12, 13, 14),
     )
     assert(Dec3.formGroup(15)(input) == expectedGroup)
   }
@@ -135,7 +140,7 @@ class TestDec3 extends AnyFunSuite {
   }
 
   test("Dec 3 Part 2 - neighbour refactor") {
-    val actual = Dec3.neighbours(5, 5, 10)
+    val actual = Dec3.neighboursForIndex(5, 5, 10)
     val expected = Seq(
       Address(4, -1),
       Address(5, -1),
@@ -147,6 +152,10 @@ class TestDec3 extends AnyFunSuite {
       Address(6, 1),
     )
     assert(expected == actual)
+  }
+
+  test("Dec 3 Part 2 - solution") {
+    assert(Dec3Part2.solution == 80179647)
   }
 
 }
