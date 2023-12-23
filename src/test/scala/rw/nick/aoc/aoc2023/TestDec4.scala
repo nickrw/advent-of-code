@@ -42,5 +42,9 @@ class TestDec4 extends AnyFunSuite {
   test("Part 1 Solution") {
     assert(Dec4Part1.solution == 28538)
   }
+  
+  test("Part 2 Solution") {
+    assert(Dec4Part2.solution == 9425061)
+  }
 
 }
