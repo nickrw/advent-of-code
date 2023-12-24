@@ -136,7 +136,7 @@ class TestDec3 extends AnyFunSuite {
   }
 
   test("Dec3 Part 1 Solution") {
-    assert(Dec3Part1.solution == 551094)
+    assert(Dec3Part1.solution("inputs/2023/dec3.txt") == 551094)
   }
 
   test("Dec 3 Part 2 - neighbour refactor") {
@@ -155,7 +155,7 @@ class TestDec3 extends AnyFunSuite {
   }
 
   test("Dec 3 Part 2 - solution") {
-    assert(Dec3Part2.solution == 80179647)
+    assert(Dec3Part2.solution("inputs/2023/dec3.txt") == 80179647)
   }
 
 }

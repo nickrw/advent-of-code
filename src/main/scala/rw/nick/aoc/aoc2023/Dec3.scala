@@ -1,7 +1,7 @@
 package rw.nick.aoc.aoc2023
 
 import rw.nick.aoc.ParserUtils.numberChars
-import rw.nick.aoc.Solution
+import rw.nick.aoc.{IntSolution, Solution}
 
 object Dec3 {
 
@@ -82,9 +82,9 @@ object Dec3 {
 
 }
 
-object Dec3Part1 extends Solution(inputPath = "inputs/2023/dec3.txt") {
+object Dec3Part1 extends IntSolution {
 
-  override def solution: Int = {
+  override def solution(input: Iterator[String]): Int = {
     val peekLen = input.next().length
     val emptyLine = (0 until peekLen).map(_ => '.').mkString
     val rows =(for line <- (Seq(emptyLine).iterator ++ input ++ Seq(emptyLine.strip).iterator)
@@ -105,9 +105,9 @@ object Dec3Part1 extends Solution(inputPath = "inputs/2023/dec3.txt") {
 
 }
 
-object Dec3Part2 extends Solution(inputPath = "inputs/2023/dec3.txt") {
+object Dec3Part2 extends IntSolution {
   import Dec3.{Address, FixedCell, GearCell, NumberGroup}
-  override def solution: Int = {
+  override def solution(input: Iterator[String]): Int = {
     val peekLen = input.next().length
     val emptyLine = (0 until peekLen).map(_ => '.').mkString
     val rows = (for line <- (Seq(emptyLine).iterator ++ input ++ Seq(emptyLine.strip).iterator)

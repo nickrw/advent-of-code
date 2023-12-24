@@ -1,15 +1,13 @@
 package rw.nick.aoc.aoc2023
 
 import rw.nick.aoc.ParserUtils.numberChars
-import rw.nick.aoc.Solution
+import rw.nick.aoc.{IntSolution, Solution}
 
 import scala.util.matching.Regex
 
 
-abstract class Dec1 extends Solution("inputs/2023/dec1.txt")
-
-object Dec1Part1 extends Dec1 {
-  override def solution: Int =
+object Dec1Part1 extends IntSolution {
+  override def solution(input: Iterator[String]): Int =
     (for line <- input
       yield sumConcatenatedFirstLastLetterDigitsInString(line)).sum
 
@@ -21,8 +19,8 @@ object Dec1Part1 extends Dec1 {
     .getOrElse(0)
 }
 
-object Dec1Part2 extends Dec1 {
-  override def solution: Int =
+object Dec1Part2 extends IntSolution {
+  override def solution(input: Iterator[String]): Int =
     (for line <- input
     yield sumFirstLastNumberWordOrDigitInString(line)).sum
 

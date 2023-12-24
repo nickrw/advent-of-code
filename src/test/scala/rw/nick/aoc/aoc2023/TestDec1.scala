@@ -15,6 +15,6 @@ class TestDec1 extends AnyFunSuite {
     assert(Dec1Part2.sumFirstLastNumberWordOrDigitInString("jsthree4p8427") == 37)
     assert(Dec1Part2.sumFirstLastNumberWordOrDigitInString("bb2") == 22)
 
-    assert(Dec1Part2.solution == 53221)
+    assert(Dec1Part2.solution("inputs/2023/dec1.txt") == 53221)
   }
 }

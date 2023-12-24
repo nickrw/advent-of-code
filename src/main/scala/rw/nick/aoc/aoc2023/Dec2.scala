@@ -1,7 +1,7 @@
 package rw.nick.aoc.aoc2023
 
 import rw.nick.aoc.ParserUtils.numberChars
-import rw.nick.aoc.Solution
+import rw.nick.aoc.{IntSolution, Solution}
 
 object Dec2 {
 
@@ -45,11 +45,9 @@ object Dec2 {
   }
 }
 
-abstract class Dec2 extends Solution("inputs/2023/dec2.txt")
-
-object Dec2Part1 extends Dec2 {
+object Dec2Part1 extends IntSolution {
   val Colour = Dec2.Colour
-  override def solution: Int = {
+  override def solution(input: Iterator[String]): Int = {
     val gameSetup = Map(
       Colour.Red -> 12,
       Colour.Green -> 13,
@@ -63,8 +61,8 @@ object Dec2Part1 extends Dec2 {
   }
 }
 
-object Dec2Part2 extends Dec2 {
-  override def solution: Int = {
+object Dec2Part2 extends IntSolution {
+  override def solution(input: Iterator[String]): Int = {
     (for line <- input
       yield Dec2.Game(line))
       .map(_.power)

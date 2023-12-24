@@ -1,7 +1,7 @@
 package rw.nick.aoc.aoc2023
 
 import rw.nick.aoc.ParserUtils.{numberChars, numberOrSpace}
-import rw.nick.aoc.Solution
+import rw.nick.aoc.{IntSolution, Solution}
 
 import scala.math.pow
 
@@ -36,14 +36,14 @@ object Dec4 {
 
 }
 
-object Dec4Part1 extends Solution("inputs/2023/dec4.txt") {
+object Dec4Part1 extends IntSolution {
   import Dec4.parseLine
-  override def solution: Int = {
+  override def solution(input: Iterator[String]): Int = {
     input.map(parseLine(_).points).sum
   }
 }
 
-object Dec4Part2 extends Solution("inputs/2023/dec4.txt") {
+object Dec4Part2 extends IntSolution {
   import Dec4.{parseLine, Card}
 
   object Collector {
@@ -62,7 +62,7 @@ object Dec4Part2 extends Solution("inputs/2023/dec4.txt") {
     }
   }
 
-  override def solution: Int = {
+  override def solution(input: Iterator[String]): Int = {
     input
       .map(parseLine)
       .foldLeft(Collector.empty) { case (coll, card) =>

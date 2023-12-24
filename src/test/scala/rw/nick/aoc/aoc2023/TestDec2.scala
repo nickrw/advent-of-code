@@ -62,7 +62,7 @@ class TestDec2 extends AnyFunSuite {
   }
 
   test("Day 2 part 1 result") {
-    assert(Dec2Part1.solution == 2162)
+    assert(Dec2Part1.solution("inputs/2023/dec2.txt") == 2162)
   }
 
   test("Day 2 part 2 minimum requirements") {
@@ -93,6 +93,6 @@ class TestDec2 extends AnyFunSuite {
   }
 
   test("Day 2 Part 2 solution") {
-    assert(Dec2Part2.solution == 72513)
+    assert(Dec2Part2.solution("inputs/2023/dec2.txt") == 72513)
   }
 }
