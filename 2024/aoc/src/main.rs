@@ -1,7 +1,8 @@
 use std::cmp::{max, min};
+use std::collections::HashMap;
 
 fn main() {
-    aoc2024_day1_part1()
+    aoc2024_day1_part2()
 }
 
 fn aoc2024_day1_part1() {
@@ -13,6 +14,22 @@ fn aoc2024_day1_part1() {
         .map(|(a, b)| max(a, b) - min(a, b) )
         .sum::<usize>()
     ;
+    println!("result: {}", result);
+}
+
+fn aoc2024_day1_part2() {
+    let (list_a, list_b) = parse_input("input_day1_part1.txt");
+    let list_b = list_b.iter().fold(HashMap::new(), |mut acc, val| {
+        *acc.entry(*val).or_insert(0) += 1;
+        acc
+    });
+    let result = list_a.iter()
+        .map(|x| match list_b.get(&x) {
+            None => 0,
+            Some(y) => x * y,
+        })
+        .sum::<usize>()
+        ;
     println!("result: {}", result);
 }
 
