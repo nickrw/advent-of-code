@@ -1,12 +1,13 @@
 use std::cmp::{max, min};
 use std::collections::HashMap;
+use aoc::utils::parse_input;
 
 fn main() {
     aoc2024_day1_part2()
 }
 
 fn aoc2024_day1_part1() {
-    let (mut list_a, mut list_b) = parse_input("input_day1_part1.txt");
+    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input("input_day1.txt", parse_line).unzip();
     list_a.sort();
     list_b.sort();
     let iterable = list_a.iter().zip(list_b.iter());
@@ -18,7 +19,7 @@ fn aoc2024_day1_part1() {
 }
 
 fn aoc2024_day1_part2() {
-    let (list_a, list_b) = parse_input("input_day1_part1.txt");
+    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input("input_day1.txt", parse_line).unzip();
     let list_b = list_b.iter().fold(HashMap::new(), |mut acc, val| {
         *acc.entry(*val).or_insert(0) += 1;
         acc
@@ -40,13 +41,4 @@ fn parse_line(line: String) -> (usize, usize) {
     let b = &line[8..];
     let b = b.parse::<usize>().expect("failed to parse second number");
     (a, b)
-}
-
-fn parse_input(filename: &str) -> (Vec<usize>, Vec<usize>) {
-    std::fs::read_to_string(filename)
-        .expect("should be able to read from file")
-        .lines()
-        .map(String::from)
-        .map(parse_line)
-        .unzip()
 }
