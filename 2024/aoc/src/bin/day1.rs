@@ -1,13 +1,15 @@
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use aoc::utils::parse_input;
+use aoc::utils::parse_input_lines_stream;
 
 fn main() {
     aoc2024_day1_part2()
 }
 
 fn aoc2024_day1_part1() {
-    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input("input_day1.txt", parse_line).unzip();
+    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input_lines_stream("input_day1.txt", parse_line)
+        .expect("input parse fail")
+        .filter_map(|v| v.ok() ).unzip();
     list_a.sort();
     list_b.sort();
     let iterable = list_a.iter().zip(list_b.iter());
@@ -19,7 +21,9 @@ fn aoc2024_day1_part1() {
 }
 
 fn aoc2024_day1_part2() {
-    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input("input_day1.txt", parse_line).unzip();
+    let (mut list_a, mut list_b): (Vec<usize>, Vec<usize>) = parse_input_lines_stream("input_day1.txt", parse_line)
+        .expect("input parse fail")
+        .filter_map(|v| v.ok() ).unzip();
     let list_b = list_b.iter().fold(HashMap::new(), |mut acc, val| {
         *acc.entry(*val).or_insert(0) += 1;
         acc

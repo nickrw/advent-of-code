@@ -1,4 +1,4 @@
-use aoc::utils::parse_input;
+use aoc::utils::{parse_input_lines, parse_input_lines_stream};
 
 fn main() {
     aoc2024_day2_part1()
@@ -54,7 +54,9 @@ impl Report {
 }
 
 fn aoc2024_day2_part1() {
-    let input = parse_input("input_day2.txt", line_parser);
+    let input = parse_input_lines_stream("input_day2.txt", line_parser)
+        .expect("input parse fail")
+        .filter_map(|v| v.ok() );
     let result = input.filter(|rep| rep.is_valid()).count();
     println!("result: {}", result);
 }
